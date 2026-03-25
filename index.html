@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1.0">
+<title>TV Debug</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0f1318;
+  color: #66ffaa;
+  font-family: 'Courier New', monospace;
+  padding: 24px;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+h1 { font-size: 28px; margin-bottom: 4px; }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.log-box {
+  border: 1px solid #1a4a35;
+  background: #141a20;
+  border-radius: 8px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.log-header {
+  font-size: 11px;
+  color: #5a6a78;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #1a4a35;
+}
+.log-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+.log-row {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.8;
+  font-family: 'Courier New', monospace;
+}
+.log-detail-val { color: #e0e0e0; }
+.empty { color: #5a6a78; text-align: center; padding: 48px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>TV Debug</h1>
+</div>
+
+<div class="log-box">
+  <div class="log-header">Event Log (<span id="logCount">0</span>)</div>
+  <div class="log-list" id="logList">
+    <div class="empty" id="emptyMsg">hello world</div>
+  </div>
+</div>
+
+<script>
+var events = [];
+var MAX = 80;
+
+function addEvent(message) {
+  events.unshift({ message: message.replaceAll("\n", " <br> \n") });
+  if (events.length > MAX) events.length = MAX;
+  renderLog();
+}
+
+function renderLog() {
+  var list = document.getElementById('logList');
+  var html = '';
+  for (var i = 0; i < events.length; i++) {
+    var e = events[i];
+    html += '<div class="log-row"><span class="log-detail-val">' + e.message + '</span> ';
+    html += '</div>';
+  }
+  list.innerHTML = html;
+  document.getElementById('logCount').textContent = events.length;
+}
+
+function clearLog() {
+  events = [];
+  renderLog();
+}
+
+document.addEventListener('click', function(e) {
+  runInfo();
+});
+
+function runInfo() {
+  // Quick diagnostic - log the full api/v2 response
+  fetch('http://127.0.0.1:8001/api/v2/')
+    .then(res => {
+      if (!res.ok) return 'Network response was not ok';
+      return res.text(); // or res.json() if the API returns JSON
+    })
+    .then(data => addEvent(data))
+    .catch(err => addEvent('Fetch error: ' + err.message));
+}
+
+</script>
+</body>
+</html>

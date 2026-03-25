@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:tizen="http://tizen.org/ns/widgets"
+        id="https://github.com/vo087/a"
+        version="1.0.0">
+
+    <tizen:application id="vo087aaaaa.a" 
+                       package="vo087aaaaa" 
+                       required_version="5.0"/>
+
+    <content src="index.html"/>
+    <name>TV Debug</name>
+    <icon src="icon.png"/>
+
+    <tizen:profile name="tv-samsung"/>
+
+    <tizen:setting pointing-device-support="enable"
+                   context-menu="disable"/>
+
+    <access origin="*" subdomains="true"/>
+
+</widget>
